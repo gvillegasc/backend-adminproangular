@@ -1,12 +1,8 @@
 var express = require('express');
+var router = express.Router();
+const appController = require('../controllers/app.controller');
 
-var app = express();
+// Peticiones GET
+router.get('/', appController.funciona); // Obtener todos lo hospitales
 
-app.get('/', (req, res, next) => {
-	res.status(200).json({
-		ok: true,
-		mensaje: 'Peticion realizada correctamente!'
-	});
-});
-
-module.exports = app;
+module.exports = router;

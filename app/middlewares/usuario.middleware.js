@@ -23,9 +23,8 @@ module.exports = {
 					mensaje: 'Token invalido',
 					errors: err
 				});
-			} else {
-				next();
 			}
+			next();
 		});
 	}
 };

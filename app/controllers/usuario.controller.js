@@ -1,6 +1,6 @@
 var Usuario = require('../models/usuario.model');
 var bcrypt = require('bcryptjs');
-var utils = require('../middlewares/utils.middleware');
+var usuarioMiddleware = require('../middlewares/usuario.middleware');
 
 module.exports = {
 	iniciarSesion: (req, res, next) => {
@@ -12,43 +12,49 @@ module.exports = {
 					mensaje: 'Error al buscar usuario',
 					errors: err
 				});
-			} else if (!usuarioDB) {
+			}
+			if (!usuarioDB) {
 				return res.status(400).json({
 					ok: false,
 					mensaje: 'Credenciales incorrectas'
-				});
-			} else if (
-				!bcrypt.compareSync(usuarioBody.password, usuarioDB.password)
-			) {
-				return res.status(400).json({
-					ok: false,
-					mensaje: 'Credenciales incorrectas'
-				});
-			} else {
-				var token = utils.generarToken(usuarioDB); /// Crear un JWT
-				res.status(200).json({
-					ok: true,
-					token: token,
-					id: usuarioDB._id
 				});
 			}
+			if (!bcrypt.compareSync(usuarioBody.password, usuarioDB.password)) {
+				return res.status(400).json({
+					ok: false,
+					mensaje: 'Credenciales incorrectas'
+				});
+			}
+			var token = usuarioMiddleware.generarToken(usuarioDB); /// Crear un JWT
+			res.status(200).json({
+				ok: true,
+				token: token,
+				id: usuarioDB._id
+			});
 		});
 	},
 	listarAllUsuarios: (req, res, next) => {
-		Usuario.find({}, 'nombre email img role').exec((err, usuarios) => {
-			if (err) {
-				return res.status(500).json({
-					ok: false,
-					mensaje: 'Error cargando usuarios',
-					errors: err
+		var desde = req.query.desde || 0;
+		desde = Number(desde);
+		Usuario.find({}, 'nombre email img role')
+			.skip(desde)
+			.limit(5)
+			.exec((err, usuarios) => {
+				if (err) {
+					return res.status(500).json({
+						ok: false,
+						mensaje: 'Error cargando usuarios',
+						errors: err
+					});
+				}
+				Usuario.count({}, (err, conteo) => {
+					res.status(200).json({
+						ok: true,
+						totalUsuarios: conteo,
+						usuarios
+					});
 				});
-			} else {
-				res.status(200).json({
-					ok: true,
-					usuarios
-				});
-			}
-		});
+			});
 	},
 	crearUsuario: (req, res, next) => {
 		var usuarioBody = req.body;
@@ -66,13 +72,12 @@ module.exports = {
 					mensaje: 'Error al crear usuario',
 					errors: err
 				});
-			} else {
-				usuarioGuardado.password = ':)';
-				res.status(201).json({
-					ok: true,
-					usuario: usuarioGuardado
-				});
 			}
+			usuarioGuardado.password = ':)';
+			res.status(201).json({
+				ok: true,
+				usuario: usuarioGuardado
+			});
 		});
 	},
 	actualizarUsuario: (req, res, next) => {
@@ -85,32 +90,31 @@ module.exports = {
 					mensaje: 'Error al buscar usuario',
 					errors: err
 				});
-			} else if (!usuario) {
+			}
+			if (!usuario) {
 				return res.status(500).json({
 					ok: false,
 					mensaje: 'El usuario con el id' + idUsuario + 'no existe',
 					errors: { message: 'No existe un usuario con ese ID' }
 				});
-			} else {
-				usuario.nombre = usuarioBody.nombre;
-				usuario.email = usuarioBody.email;
-				usuario.role = usuarioBody.role;
-				usuario.save((err, usuarioGuardado) => {
-					if (err) {
-						return res.status(400).json({
-							ok: false,
-							mensaje: 'Error al actualizar usuario',
-							errors: err
-						});
-					} else {
-						delete usuarioGuardado.password;
-						res.status(200).json({
-							ok: true,
-							usuario: usuarioGuardado
-						});
-					}
-				});
 			}
+			usuario.nombre = usuarioBody.nombre;
+			usuario.email = usuarioBody.email;
+			usuario.role = usuarioBody.role;
+			usuario.save((err, usuarioGuardado) => {
+				if (err) {
+					return res.status(400).json({
+						ok: false,
+						mensaje: 'Error al actualizar usuario',
+						errors: err
+					});
+				}
+				usuarioGuardado.password = ':)';
+				res.status(200).json({
+					ok: true,
+					usuario: usuarioGuardado
+				});
+			});
 		});
 	},
 	borrarUsuario: (req, res, next) => {
@@ -122,18 +126,18 @@ module.exports = {
 					mensaje: 'Error al borrar usuario',
 					errors: err
 				});
-			} else if (!usuarioBorrado) {
+			}
+			if (!usuarioBorrado) {
 				return res.status(400).json({
 					ok: false,
 					mensaje: 'No existe un usuario con ese id',
 					errors: err
 				});
-			} else {
-				res.status(200).json({
-					ok: true,
-					usuario: usuarioBorrado
-				});
 			}
+			res.status(200).json({
+				ok: true,
+				usuario: usuarioBorrado
+			});
 		});
 	}
 };

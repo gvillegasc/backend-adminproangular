@@ -34,13 +34,28 @@ mongoose.connection.openUri(
 );
 mongoose.set('useNewUrlParser', true);
 
+// Server index config - ver imagen en el navegador
+// var serveIndex = require('serve-index');
+// app.use(express.static(__dirname + '/'));
+// app.use('/app/uploads', serveIndex(__dirname + '/app/uploads'));
+
 // Importar rutas
 var appRouter = require('./app/routes/app.route');
 var usuarioRouter = require('./app/routes/usuario.route');
+var hospitalRouter = require('./app/routes/hospital.route');
+var medicoRouter = require('./app/routes/medico.route');
+var buscadorRouter = require('./app/routes/buscador.route');
+var uploadRouter = require('./app/routes/upload.route');
+var imagenRouter = require('./app/routes/imagen.route');
 
 // Rutas
 app.use('/', appRouter);
 app.use('/usuario', usuarioRouter);
+app.use('/hospital', hospitalRouter);
+app.use('/medico', medicoRouter);
+app.use('/buscador', buscadorRouter);
+app.use('/upload', uploadRouter);
+app.use('/imagen', imagenRouter);
 
 // Escuchar peticiones
 app.listen(port, () => {
