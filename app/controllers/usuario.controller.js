@@ -2,7 +2,88 @@ var Usuario = require('../models/usuario.model');
 var bcrypt = require('bcryptjs');
 var usuarioMiddleware = require('../middlewares/usuario.middleware');
 
+// Google
+const { OAuth2Client } = require('google-auth-library');
+var CLIENT_ID =
+	'677013130041-n9te9v1muno95aqi7khnpmbcumaup1pg.apps.googleusercontent.com';
+const client = new OAuth2Client(CLIENT_ID);
+
+async function verify(token) {
+	const ticket = await client.verifyIdToken({
+		idToken: token,
+		audience: CLIENT_ID
+	});
+	const payload = ticket.getPayload();
+	console.log(payload);
+	return {
+		nombre: payload.name,
+		email: payload.email,
+		img: payload.picture,
+		google: true
+	};
+}
 module.exports = {
+	iniciarSesionGoogle: async (req, res, next) => {
+		var token = req.body.token;
+		var googleUser = await verify(token).catch(e => {
+			return res.status(403).json({
+				ok: false,
+				mensaje: 'Token no válido',
+				errors: e
+			});
+		});
+
+		Usuario.findOne({ email: googleUser.email }, (err, usuarioDB) => {
+			if (err) {
+				return res.status(500).json({
+					ok: false,
+					mensaje: 'Error al buscar usuario',
+					errors: err
+				});
+			}
+			if (usuarioDB) {
+				if (usuarioDB.google === false) {
+					return res.status(400).json({
+						ok: false,
+						mensaje: 'Debe de usar su autenticación normal',
+						errors: err
+					});
+				} else {
+					var token = usuarioMiddleware.generarToken(usuarioDB); /// Crear un JWT
+					res.status(200).json({
+						ok: true,
+						usuario: usuarioDB,
+						token: token,
+						id: usuarioDB._id
+					});
+				}
+			} else {
+				//El usuario no existe por eso se tiene que crear
+				var usuario = new Usuario();
+
+				usuario.nombre = googleUser.nombre;
+				usuario.email = googleUser.email;
+				usuario.img = googleUser.img;
+				usuario.google = true;
+				usuario.password = ':)';
+
+				usuario.save((err, usuarioDB) => {
+					var token = usuarioMiddleware.generarToken(usuarioDB); /// Crear un JWT
+					res.status(200).json({
+						ok: true,
+						usuario: usuarioDB,
+						token: token,
+						id: usuarioDB._id
+					});
+				});
+			}
+		});
+		// return res.status(200).json({
+		// 	ok: true,
+		// 	mensaje: 'Login correcto',
+		// 	googleUser
+		// });
+	},
 	iniciarSesion: (req, res, next) => {
 		var usuarioBody = req.body;
 		Usuario.findOne({ email: usuarioBody.email }, (err, usuarioDB) => {
@@ -47,7 +128,7 @@ module.exports = {
 						errors: err
 					});
 				}
-				Usuario.count({}, (err, conteo) => {
+				Usuario.countDocuments({}, (err, conteo) => {
 					res.status(200).json({
 						ok: true,
 						totalUsuarios: conteo,

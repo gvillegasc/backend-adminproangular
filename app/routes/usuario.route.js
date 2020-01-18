@@ -13,6 +13,7 @@ router.post(
 	usuarioController.crearUsuario
 ); // Crear un nuevo usuario
 router.post('/iniciarSesion', usuarioController.iniciarSesion); // Login de usuario
+router.post('/iniciarSesionGoogle', usuarioController.iniciarSesionGoogle); // Login de usuario
 
 // Peticiones PUT
 router.put(
