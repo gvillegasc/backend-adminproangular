@@ -16,7 +16,7 @@ module.exports = {
 						errors: err
 					});
 				}
-				Hospital.count({}, (err, conteo) => {
+				Hospital.countDocuments({}, (err, conteo) => {
 					res.status(200).json({
 						ok: true,
 						totalHospital: conteo,
@@ -25,6 +25,32 @@ module.exports = {
 				});
 			});
 	},
+	listarHospital: (req, res, next) => {
+		var idHospital = req.params.idHospital;
+		Hospital.findById(idHospital)
+			.populate('usuario', 'nombre img email')
+			.exec((err, hospital) => {
+				if (err) {
+					return res.status(500).json({
+						ok: false,
+						mensaje: 'Error al buscar hospital',
+						errors: err
+					});
+				}
+				if (!hospital) {
+					return res.status(400).json({
+						ok: false,
+						mensaje: 'EL hospital con el id' + idHospital + 'no existe',
+						errors: { message: 'No existe un hospital' }
+					});
+				}
+				res.status(200).json({
+					ok: true,
+					hospital
+				});
+			});
+	},
+
 	crearHospital: (req, res, next) => {
 		var hospitalBody = req.body;
 		var hospital = new Hospital({

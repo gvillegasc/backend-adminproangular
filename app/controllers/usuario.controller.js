@@ -49,7 +49,8 @@ module.exports = {
 						errors: err
 					});
 				} else {
-					var token = usuarioMiddleware.generarToken(usuarioDB); /// Crear un JWT
+					// Funcion para iniciar sesion
+					var token = usuarioMiddleware.generarToken(usuarioDB); // Crear un JWT
 					res.status(200).json({
 						ok: true,
 						usuario: usuarioDB,
@@ -60,7 +61,6 @@ module.exports = {
 			} else {
 				//El usuario no existe por eso se tiene que crear
 				var usuario = new Usuario();
-
 				usuario.nombre = googleUser.nombre;
 				usuario.email = googleUser.email;
 				usuario.img = googleUser.img;
@@ -106,10 +106,13 @@ module.exports = {
 					mensaje: 'Credenciales incorrectas'
 				});
 			}
+
+			usuarioDB.password = ':)';
 			var token = usuarioMiddleware.generarToken(usuarioDB); /// Crear un JWT
 			res.status(200).json({
 				ok: true,
 				token: token,
+				usuario: usuarioDB,
 				id: usuarioDB._id
 			});
 		});
@@ -117,7 +120,7 @@ module.exports = {
 	listarAllUsuarios: (req, res, next) => {
 		var desde = req.query.desde || 0;
 		desde = Number(desde);
-		Usuario.find({}, 'nombre email img role')
+		Usuario.find({}, 'nombre email img role google')
 			.skip(desde)
 			.limit(5)
 			.exec((err, usuarios) => {

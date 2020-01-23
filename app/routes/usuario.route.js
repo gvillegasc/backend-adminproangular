@@ -7,11 +7,8 @@ var usuarioMiddleware = require('../middlewares/usuario.middleware');
 router.get('/', usuarioController.listarAllUsuarios); // Obtener todos lo usuarios
 
 // Peticiones POST
-router.post(
-	'/',
-	usuarioMiddleware.verificarToken,
-	usuarioController.crearUsuario
-); // Crear un nuevo usuario
+router.post('/', usuarioController.crearUsuario); // Crear un nuevo usuario
+
 router.post('/iniciarSesion', usuarioController.iniciarSesion); // Login de usuario
 router.post('/iniciarSesionGoogle', usuarioController.iniciarSesionGoogle); // Login de usuario
 

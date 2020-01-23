@@ -18,7 +18,7 @@ module.exports = {
 						errors: err
 					});
 				}
-				Medico.count({}, (err, conteo) => {
+				Medico.countDocuments({}, (err, conteo) => {
 					res.status(200).json({
 						ok: true,
 						totalMedicos: conteo,
