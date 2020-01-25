@@ -32,7 +32,8 @@ module.exports = {
 		var medico = new Medico({
 			nombre: medicoBody.nombre,
 			img: medicoBody.img,
-			usuario: medicoBody.usuario,
+			// usuario: medicoBody.usuario,
+			usuario: req.usuario._id,
 			hospital: medicoBody.hospital
 		});
 		medico.save((err, medicoGuardado) => {

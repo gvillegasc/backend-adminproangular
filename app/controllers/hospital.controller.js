@@ -19,7 +19,7 @@ module.exports = {
 				Hospital.countDocuments({}, (err, conteo) => {
 					res.status(200).json({
 						ok: true,
-						totalHospital: conteo,
+						totalHospitales: conteo,
 						hospitales
 					});
 				});
@@ -56,7 +56,8 @@ module.exports = {
 		var hospital = new Hospital({
 			nombre: hospitalBody.nombre,
 			img: hospitalBody.img,
-			usuario: hospitalBody.usuario
+			usuario: req.usuario._id
+			//usuario: hospitalBody.usuario
 		});
 		hospital.save((err, hospitalGuardado) => {
 			if (err) {

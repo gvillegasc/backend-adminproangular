@@ -12,6 +12,7 @@ var medicoSchema = new Schema({
 	hospital: {
 		type: Schema.Types.ObjectId,
 		ref: 'Hospital',
+		// required: false,
 		required: [true, 'El id del hospital es un campo obligatorio']
 	}
 });

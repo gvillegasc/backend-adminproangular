@@ -1,3 +1,7 @@
 node_modules/
 
 google-sign-demo/node_modules
+
+app/uploads/usuarios
+app/uploads/medicos
+app/uploads/hospitales

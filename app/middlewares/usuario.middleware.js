@@ -16,6 +16,7 @@ module.exports = {
 	},
 	verificarToken: (req, res, next) => {
 		var token = req.query.token;
+		// console.log(token);
 		jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
 			if (err) {
 				return res.status(401).json({
@@ -24,6 +25,10 @@ module.exports = {
 					errors: err
 				});
 			}
+			//++++++++++++++++++++++++++++++++++++++++++++
+			// console.log(decoded);
+			//++++++++++++++++++++++++++++++++++++++++++++
+			req.usuario = decoded;
 			next();
 		});
 	}

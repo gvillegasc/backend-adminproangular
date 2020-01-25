@@ -14,7 +14,7 @@ async function verify(token) {
 		audience: CLIENT_ID
 	});
 	const payload = ticket.getPayload();
-	console.log(payload);
+	// console.log(payload);
 	return {
 		nombre: payload.name,
 		email: payload.email,
