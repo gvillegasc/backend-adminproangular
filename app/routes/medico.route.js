@@ -5,6 +5,7 @@ var usuarioMiddleware = require('../middlewares/usuario.middleware');
 
 // Peticiones GET
 router.get('/', medicoController.listaAllMedicos); // Obtener todos los medicos
+router.get('/:idMedico', medicoController.listarMedico); // Obtener todos los medicos
 
 // Peticiones POST
 router.post(

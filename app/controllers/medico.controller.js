@@ -27,11 +27,39 @@ module.exports = {
 				});
 			});
 	},
+
+	listarMedico: (req, res, next) => {
+		var id = req.params.idMedico;
+		Medico.findById(id)
+			.populate('usuario', 'nombre email img')
+			.populate('hospital')
+			.exec((err, medico) => {
+				if (err) {
+					return res.status(500).json({
+						ok: false,
+						mensaje: 'Error al buscar medico',
+						errors: err
+					});
+				}
+				if (!medico) {
+					return res.status(500).json({
+						ok: false,
+						mensaje: 'El medico con el id' + idMedico + 'no existe',
+						errors: { message: 'No existe un medico con ese ID' }
+					});
+				}
+				return res.status(200).json({
+					ok: false,
+					medico
+				});
+			});
+	},
 	crearMedico: (req, res, next) => {
 		var medicoBody = req.body;
 		var medico = new Medico({
 			nombre: medicoBody.nombre,
-			img: medicoBody.img,
+			// img: medicoBody.img,
+
 			// usuario: medicoBody.usuario,
 			usuario: req.usuario._id,
 			hospital: medicoBody.hospital

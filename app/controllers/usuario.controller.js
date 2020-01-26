@@ -146,7 +146,7 @@ module.exports = {
 			nombre: usuarioBody.nombre,
 			email: usuarioBody.email,
 			password: bcrypt.hashSync(usuarioBody.password, 10),
-			img: usuarioBody.img,
+			// img: usuarioBody.img,
 			role: usuarioBody.role
 		});
 		usuario.save((err, usuarioGuardado) => {

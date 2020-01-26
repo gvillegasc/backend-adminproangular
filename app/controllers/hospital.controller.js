@@ -55,7 +55,7 @@ module.exports = {
 		var hospitalBody = req.body;
 		var hospital = new Hospital({
 			nombre: hospitalBody.nombre,
-			img: hospitalBody.img,
+			// img: hospitalBody.img,
 			usuario: req.usuario._id
 			//usuario: hospitalBody.usuario
 		});
