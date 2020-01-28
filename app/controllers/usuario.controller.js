@@ -143,6 +143,14 @@ module.exports = {
 				});
 			});
 	},
+	renovarToken: (req, res, next) => {
+		var token = usuarioMiddleware.generarToken(req.usuario);
+		res.status(200).json({
+			ok: true,
+			usuario: req.usuario,
+			token
+		});
+	},
 	crearUsuario: (req, res, next) => {
 		var usuarioBody = req.body;
 		var usuario = new Usuario({

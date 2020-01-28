@@ -5,6 +5,11 @@ var usuarioMiddleware = require('../middlewares/usuario.middleware');
 
 // Peticiones GET
 router.get('/', usuarioController.listarAllUsuarios); // Obtener todos lo usuarios
+router.get(
+	'/renovarToken',
+	[usuarioMiddleware.verificarToken],
+	usuarioController.renovarToken
+);
 
 // Peticiones POST
 router.post('/', usuarioController.crearUsuario); // Crear un nuevo usuario
