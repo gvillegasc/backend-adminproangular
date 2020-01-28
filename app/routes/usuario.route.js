@@ -15,14 +15,14 @@ router.post('/iniciarSesionGoogle', usuarioController.iniciarSesionGoogle); // L
 // Peticiones PUT
 router.put(
 	'/:idUsuario',
-	usuarioMiddleware.verificarToken,
+	[usuarioMiddleware.verificarToken, usuarioMiddleware.verificarRoleoUsuario],
 	usuarioController.actualizarUsuario
 ); // Actualizar usuario
 
 // Peticiones DELETE
 router.delete(
 	'/:idUsuario',
-	usuarioMiddleware.verificarToken,
+	[usuarioMiddleware.verificarToken, usuarioMiddleware.verificarRole],
 	usuarioController.borrarUsuario
 ); // Eliminar usuario
 

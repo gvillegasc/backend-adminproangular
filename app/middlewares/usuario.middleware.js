@@ -29,7 +29,33 @@ module.exports = {
 			// console.log(decoded);
 			//++++++++++++++++++++++++++++++++++++++++++++
 			req.usuario = decoded;
+
 			next();
 		});
+	},
+	verificarRole: (req, res, next) => {
+		var usuario = req.usuario;
+		if (usuario.role == 'ADMIN_ROLE') {
+			next();
+			return;
+		} else {
+			return res.status(401).json({
+				ok: false,
+				mensaje: 'Token incorrecto no es administrado'
+			});
+		}
+	},
+	verificarRoleoUsuario: (req, res, next) => {
+		var usuario = req.usuario;
+		var idUsuario = req.params.idUsuario;
+		if (usuario.role === 'ADMIN_ROLE' || usuario._id === idUsuario) {
+			next();
+			return;
+		} else {
+			return res.status(401).json({
+				ok: false,
+				mensaje: 'Token incorrecto no es administrado ni es el mismo usuario'
+			});
+		}
 	}
 };
